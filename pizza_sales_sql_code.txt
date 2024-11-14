@@ -1,0 +1,87 @@
+create database sales;
+use sales;
+select * from  `pizzaaa sales`;
+
+
+-- 1.TOTAL ORDERS
+select count(order_id) as total_orders from `pizzaaa sales` ;
+
+-- 2.REVENUE
+select sum(total_price) as Total_Revenue from `pizzaaa sales`;
+
+
+-- 3.AVERAGE ORDER VALUE
+select avg(total_price) as avg_order_value
+from `pizzaaa sales`;
+
+-- 4.TOTAL PIZZA SOLD
+
+select sum(quantity) as  total_pizza_sold
+from `pizzaaa sales`;
+
+-- 5.INDENTIFY THE HIGHEST-PRICED PIZZA.
+
+SELECT 
+    pizza_name, unit_price
+FROM
+   `pizzaaa sales`
+    ORDER BY total_price DESC
+LIMIT 1;
+
+-- 6.IDENTIFY THE MOST COMMON PIZZA SIZE ORDERED
+
+SELECT 
+    pizza_size,
+    COUNT(order_id) AS order_count
+FROM
+    `pizzaaa sales`
+GROUP BY pizza_size
+ORDER BY order_count DESC
+LIMIT 1;
+
+
+-- 7.LIST THE TOP 5 MOST ORDERED PIZZA TYPES ALONG WITH THEIR QUANTITIES.
+
+
+SELECT 
+    pizza_name, SUM(quantity) as quantity
+FROM
+    `pizzaaa sales`
+GROUP BY pizza_name
+ORDER BY quantity DESC
+LIMIT 5;
+
+
+-- 8.% OF SALES BY PIZZA CATEGORY
+
+WITH CategorySales AS (
+  SELECT
+    pizza_category,
+    SUM(total_price) AS total_category_sales
+  FROM
+    `pizzaaa sales`
+  GROUP BY
+    pizza_category
+)
+SELECT
+  pizza_category,
+  total_category_sales,
+  (total_category_sales / (SELECT SUM(total_price) FROM `pizzaaa sales`) * 100) AS percentage_sales
+FROM
+  CategorySales;
+
+
+-- 9.PIZZA SALES BY SIZE
+
+WITH TotalSales AS (
+  SELECT SUM(total_price) AS total_sales
+  FROM  `pizzaaa sales`
+)
+SELECT
+  pizza_size,
+  SUM(total_price) AS size_sales,
+  ROUND((SUM(total_price) / (SELECT total_sales FROM TotalSales)) * 100, 2) AS percentage_sales 
+FROM
+  `pizzaaa sales`
+GROUP BY
+  pizza_size ;
